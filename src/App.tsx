@@ -10,17 +10,23 @@ export default function App() {
 
     const [characters, setCharacters] = useState<Character[]>([])
     const [searchText, setSearchText] = useState<string>("")
+    const [nextUrl, setNextUrl] = useState<string | undefined>()
+    const [prevUrl, setPrevUrl] = useState<string | undefined>()
 
     useEffect(() => {
-        getCharactersFromApi()
+        getCharactersFromApi("https://rickandmortyapi.com/api/character")
     }, [])
 
-    const getCharactersFromApi = () => {
-        getCharacters("https://rickandmortyapi.com/api/character")
-            .then(data => {
-                setCharacters(data.results)
-            })
-            .catch(error => console.log(error))
+    const getCharactersFromApi = (url?: string) => {
+        if (url) {
+            getCharacters(url)
+                .then(data => {
+                    setCharacters(data.results)
+                    setNextUrl(data.info.next)
+                    setPrevUrl(data.info.prev)
+                })
+                .catch(error => console.log(error))
+        }
     }
 
     const filteredCharacters = characters.filter(character => character.name.toLocaleLowerCase().includes(searchText.toLocaleLowerCase()))
@@ -34,7 +40,7 @@ export default function App() {
 
             <Header/>
 
-            <ActionBar searchText={searchText} onSearchInputChange={onSearchInputChange}/>
+            <ActionBar searchText={searchText} onSearchInputChange={onSearchInputChange} hasNext={!!nextUrl} hasPrev={!!prevUrl} loadNext={() => getCharactersFromApi(nextUrl)} loadPrev={() => getCharactersFromApi(prevUrl)}/>
 
             <CharacterGallery characters={filteredCharacters}/>
 
