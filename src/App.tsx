@@ -8,28 +8,37 @@ import {getCharacters} from "./services/RickAndMortyApiService";
 
 export default function App() {
 
-  const [characters, setCharacters] = useState<Character[]>([])
+    const [characters, setCharacters] = useState<Character[]>([])
+    const [searchText, setSearchText] = useState<string>("")
 
-  useEffect(() => {
-    getCharactersFromApi()
-  }, [])
+    useEffect(() => {
+        getCharactersFromApi()
+    }, [])
 
-  const getCharactersFromApi = () => {
-    getCharacters("https://rickandmortyapi.com/api/character")
-        .then(data => {
-          setCharacters(data.results)
-        })
-        .catch(error => console.log(error))
-  }
+    const getCharactersFromApi = () => {
+        getCharacters("https://rickandmortyapi.com/api/character")
+            .then(data => {
+                setCharacters(data.results)
+            })
+            .catch(error => console.log(error))
+    }
 
-  return (
-    <div className="App">
+    const filteredCharacters = characters.filter(character => character.name.toLocaleLowerCase().includes(searchText.toLocaleLowerCase()))
 
-      <Header />
+    const onSearchInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+        setSearchText(event.target.value)
+    }
 
-      <CharacterGallery characters={characters} />
+    return (
+        <div className="App">
 
-    </div>
-  );
+            <Header/>
+
+            <ActionBar searchText={searchText} onSearchInputChange={onSearchInputChange}/>
+
+            <CharacterGallery characters={filteredCharacters}/>
+
+        </div>
+    );
 }
 
