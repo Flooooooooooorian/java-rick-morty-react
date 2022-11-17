@@ -3,6 +3,7 @@ import './App.css';
 import CharacterGallery from "./components/CharacterGallery";
 import Header from "./components/Header";
 import {ChangeEvent, useState} from "react";
+import ActionBar from "./components/ActionBar";
 
 
 export default function App() {
@@ -689,18 +690,17 @@ export default function App() {
     return false
   })
 
-  const onSearchTextChange = (event: ChangeEvent<HTMLInputElement>) => {
-    console.log(event.target.value)
-    setSearchText(event.target.value)
+  function myFunction(searchText: string) {
+    console.log("App")
+    console.log(searchText)
+    setSearchText(searchText)
   }
 
   return (
     <div className="App">
-
       <Header />
-      <input onChange={onSearchTextChange}/>
+      <ActionBar myCallBackFunction={myFunction} />
       <CharacterGallery characters={filteredCharacters} />
-
     </div>
   );
 }
